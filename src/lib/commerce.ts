@@ -1,0 +1,8 @@
+export interface Money { amount: string; currencyCode: string }
+export interface Variant { id: string; title: string; availableForSale: boolean; price: Money; compareAtPrice: Money | null; selectedOptions: {name:string;value:string}[] }
+export interface Product { id:string; handle:string; title:string; description:string; productType:string; tags:string[]; createdAt:string; availableForSale:boolean; images:{edges:{node:{url:string;altText:string|null}}[]}; variants:{edges:{node:Variant}[]}; options:{name:string;values:string[]}[]; priceRange:{minVariantPrice:Money} }
+export function formatMoney(money: Money) { const amount=Number(money.amount); if(money.currencyCode==='IRR') return `${new Intl.NumberFormat('fa-IR').format(amount/10)} تومان`; return new Intl.NumberFormat('fa-IR',{style:'currency',currency:money.currencyCode,maximumFractionDigits:2}).format(amount); }
+export function discountPercent(variant: Variant | undefined) { if(!variant?.compareAtPrice) return 0; const old=Number(variant.compareAtPrice.amount); return old>Number(variant.price.amount)?Math.round((1-Number(variant.price.amount)/old)*100):0; }
+export function selectedVariant(product:Product, choices:Record<string,string>) { return product.variants.edges.find(({node})=>node.selectedOptions.every(o=>choices[o.name]===o.value))?.node; }
+export function departmentMatch(p:Product,department:string) { if(department==='all')return true; return department==='kids'?p.tags.some(t=>['kids','children','بچگانه','کودک'].includes(t)):!p.tags.some(t=>['kids','children','بچگانه','کودک'].includes(t)); }
+export function validContact(value:string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)||/^09\d{9}$/.test(value); }
