@@ -1,0 +1,21 @@
+// Editable store settings (stored in public.store_settings, edited by admins only).
+export const settingFields = [
+  { key: 'hero_title', label: 'عنوان صفحه اصلی', long: false },
+  { key: 'hero_subtitle', label: 'زیرعنوان صفحه اصلی', long: true },
+  { key: 'about_story', label: 'متن داستان برند (درباره ما)', long: true },
+  { key: 'contact_phone', label: 'تلفن پشتیبانی', long: false },
+  { key: 'contact_email', label: 'ایمیل پشتیبانی', long: false },
+  { key: 'contact_address', label: 'نشانی', long: true },
+  { key: 'size_chart', label: 'جدول سایز (هر خط: سایز|دور سینه|دور کمر؛ خط اول عنوان ستون‌ها)', long: true },
+  { key: 'policy_terms', label: 'قوانین و مقررات', long: true },
+  { key: 'policy_privacy', label: 'حریم خصوصی', long: true },
+  { key: 'policy_returns', label: 'شرایط تعویض و بازگشت', long: true },
+  { key: 'policy_shipping', label: 'شرایط ارسال', long: true },
+  { key: 'faq_purchase', label: 'پرسش متداول: خرید', long: true },
+  { key: 'faq_size', label: 'پرسش متداول: سایز', long: true },
+  { key: 'faq_returns', label: 'پرسش متداول: تعویض', long: true },
+  { key: 'faq_shipping', label: 'پرسش متداول: ارسال', long: true },
+  { key: 'faq_tracking', label: 'پرسش متداول: پیگیری سفارش', long: true },
+  { key: 'faq_discount', label: 'پرسش متداول: کد تخفیف', long: true },
+  { key: 'faq_support', label: 'پرسش متداول: پشتیبانی', long: true },
+] as const;
