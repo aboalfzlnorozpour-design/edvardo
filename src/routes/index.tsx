@@ -1,23 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import {createFileRoute,Link} from '@tanstack/react-router';
+import {lazy,Suspense,useEffect,useState} from 'react';
+import {useSuspenseQuery} from '@tanstack/react-query';
+import {ArrowLeft,ArrowDown,Check,Layers,Heart,MessageCircle,Pause,Play} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {productsOptions} from '@/lib/shopify';
+import {settingsOptions} from '@/lib/settings';
+import {pageHead} from '@/lib/metadata';
+import {discountPercent} from '@/lib/commerce';
+import {ProductCard} from '@/components/store/product-card';
+import {Newsletter} from '@/components/store/newsletter';
+import {FAQ,EmptyCatalog,SectionHeading} from '@/components/store/page';
+import mountain from '@/assets/mountain.asset.json';
+import video from '@/assets/mountain-video.asset.json';
+import men from '@/assets/men.asset.json';
+import kids from '@/assets/kids.asset.json';
+const MountainScene=lazy(()=>import('@/components/store/mountain-scene'));
+export const Route=createFileRoute('/')({head:()=>pageHead('EDVARDO — استایل شما، امضای شخصیت شماست','فروشگاه پوشاک مردانه و کودکانه EDVARDO؛ انتخابی خاص برای هر سلیقه.'),loader:async({context})=>{await Promise.all([context.queryClient.ensureQueryData(productsOptions),context.queryClient.ensureQueryData(settingsOptions)]);},component:Home});
+function Home(){const{data:products}=useSuspenseQuery(productsOptions);const{data:settings}=useSuspenseQuery(settingsOptions);const[motion,setMotion]=useState(false);useEffect(()=>{setMotion(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);},[]);return <main><section className="campaign"><img className="campaign-media" src={mountain.url} alt="قله‌های برفی و آسمان روشن" fetchPriority="high"/>{motion&&<video className="campaign-media" autoPlay muted loop playsInline poster={mountain.url} src={video.url}/>}<Suspense fallback={null}>{motion&&<MountainScene/>}</Suspense><div className="campaign-shade"/><div className="campaign-copy"><div className="campaign-kicker"><span/> فراتر از پوشاک، نزدیک‌تر به شما <span/></div><h1 dir="ltr">EDVARDO</h1><h2>{settings['hero_title']||'استایل شما، امضای شخصیت شماست'}</h2><p>{settings['hero_subtitle']||'تجربه‌ای متفاوت از پوشاک مردانه و کودکانه، با انتخابی خاص برای هر سلیقه.'}</p><div className="campaign-actions"><Button asChild variant="campaign" size="lg"><Link to="/men">مشاهده کالکشن مردانه <ArrowLeft/></Link></Button><Button asChild variant="glass" size="lg"><Link to="/kids">کالکشن بچگانه <ArrowLeft/></Link></Button></div></div><div className="campaign-bottom"><span dir="ltr">A SIGNATURE OF YOU.</span><a href="#collections" aria-label="مشاهده کالکشن‌ها"><ArrowDown size={18}/></a><Button variant="glass" size="icon" aria-label={motion?'توقف حرکت پس‌زمینه':'پخش پس‌زمینه'} title={motion?'توقف حرکت':'پخش حرکت'} onClick={()=>setMotion(!motion)}>{motion?<Pause/>:<Play/>}</Button></div></section><div className="brand-strip"><span>انتخابی خاص</span><span>پوشاک مردانه و کودکانه</span><span>الهام‌گرفته از طبیعت</span><span dir="ltr">EDVARDO</span></div><section className="page-width section-space" id="collections"><SectionHeading title="دو دنیا، یک امضای خاص" eyebrow="کالکشن‌های EDVARDO"/><div className="collection-grid"><Link to="/men" className="collection-tile"><img src={men.url} alt="کالکشن مردانه EDVARDO" loading="lazy"/><div><span>برای مردانی با انتخاب متفاوت</span><h3>کالکشن مردانه</h3><p>جزئیات، کیفیت و استایل <ArrowLeft/></p></div></Link><Link to="/kids" className="collection-tile"><img src={kids.url} alt="کالکشن بچگانه EDVARDO" loading="lazy"/><div><span>برای لحظه‌های کوچک و خاطره‌های بزرگ</span><h3>دنیای رنگارنگ کوچولوها</h3><p>راحت، دوست‌داشتنی، خاص <ArrowLeft/></p></div></Link></div><div className="category-links">{['تیشرت','پیراهن','شلوار','هودی و سویشرت','لباس بافت','لباس زمستانی'].map(s=><Button asChild variant="link" key={s}><Link to="/men">{s}<ArrowLeft size={14}/></Link></Button>)}</div></section><section className="page-width section-space"><SectionHeading title="منتخب‌های EDVARDO" eyebrow="انتخاب امروز شما"/>{products.length?<div className="product-grid">{products.slice(0,4).map(p=><ProductCard product={p} key={p.id}/>)}</div>:<EmptyCatalog/>}</section><section className="story-band"><img src={mountain.url} alt="کوهستان برفی؛ الهام هویت EDVARDO" loading="lazy"/><div className="page-width story-copy"><span className="eyebrow">داستان EDVARDO</span><h2>سادگی، در اوج زیبایی.</h2><p>از سکوت کوهستان تا جزئیات استایل شما؛ EDVARDO نگاهی مدرن به پوشاک، انتخاب و شخصیت است.</p><Button asChild variant="campaign"><Link to="/about">بیشتر درباره ما بدانید <ArrowLeft/></Link></Button></div></section><section className="page-width section-space"><SectionHeading title="چرا EDVARDO؟" eyebrow="فلسفه انتخاب ما"/><div className="values-grid">{[[Check,'انتخاب دقیق','توجه به جزئیات، در هر انتخاب.'],[Layers,'استایل مدرن','سادگی و شخصیت در کنار هم.'],[Heart,'برای هر سلیقه','دو دنیای مردانه و کودکانه.'],[MessageCircle,'همراه شما','صدای شما برای ما مهم است.']].map(([Icon,title,text])=>{const I=Icon as typeof Check;return <div key={String(title)}><I strokeWidth={1.2}/><h3>{String(title)}</h3><p>{String(text)}</p></div>;})}</div></section><section className="offers-band"><div className="page-width"><SectionHeading title="پیشنهادهای ویژه EDVARDO" eyebrow="انتخاب‌های ویژه"/>{products.some(p=>p.variants.edges.some(v=>discountPercent(v.node)>0))?<div className="product-grid">{products.filter(p=>p.variants.edges.some(v=>discountPercent(v.node)>0)).slice(0,4).map(p=><ProductCard key={p.id} product={p}/>)}</div>:<div className="quiet-empty"><p>در حال حاضر پیشنهاد ویژه‌ای فعال نیست.</p><Button asChild variant="outline"><Link to="/offers">پیشنهادهای ویژه <ArrowLeft/></Link></Button></div>}</div></section><section className="page-width section-space review-section"><span className="eyebrow">تجربه مشتریان EDVARDO</span><h2>هر انتخاب، یک داستان.</h2><p>هنوز دیدگاهی از خریداران ثبت نشده است.</p></section>{products.length>0&&<section className="page-width section-space"><SectionHeading title="شاید این محصولات را هم بپسندید" eyebrow="انتخاب‌های بیشتر"/><div className="product-grid">{products.slice(-4).map(p=><ProductCard product={p} key={p.id}/>)}</div></section>}<Newsletter/><section className="page-width section-space faq-section"><div><span className="eyebrow">همراه شما هستیم</span><h2>پرسش‌های متداول</h2><Button asChild variant="link"><Link to="/contact">سؤال دیگری دارید؟ <ArrowLeft/></Link></Button></div><FAQ/></section></main>;}

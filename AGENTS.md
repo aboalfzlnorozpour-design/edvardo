@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Store architecture
+- Use TanStack leaf routes with a shared StoreShell in the root; every public page has Persian metadata.
+- Shopify is the sole product/cart source; never reinterpret non-IRR prices as تومان without an approved conversion.
+- Cloud customer records use browser RLS; store settings and message administration require the protected admin role.
+- Persist the Shopify cart with deferred hydration and normalize API-issued checkout URLs on both reads and writes.
